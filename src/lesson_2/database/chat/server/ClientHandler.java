@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 class ClientHandler {
@@ -77,25 +78,17 @@ class ClientHandler {
                         }
                         System.out.println("Client: " + str);
                     }
-                } catch (IOException e) {
+                } catch (IOException | SQLException e) {
                     e.printStackTrace();
                 } finally {
                     try {
                         in.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
                         out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
                         socket.close();
+                        server.unsubscribe(this);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    server.unsubscribe(this);
                 }
             });
             t1.setDaemon(true);
@@ -105,11 +98,7 @@ class ClientHandler {
         }
     }
 
-    void sendMsg(String msg) {
-        try {
-            out.writeUTF(msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void sendMsg(String msg) throws IOException {
+        out.writeUTF(msg);
     }
 }
