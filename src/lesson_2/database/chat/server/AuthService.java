@@ -34,4 +34,14 @@ class AuthService {
         connection.close();
     }
 
+    static void saveReplica(String nick, String text) throws SQLException {
+        String query = String.format("INSERT INTO chatHistory (nick, replica) " +
+                "VALUES ('%s', '%s')", nick, text);
+        stmt.execute(query);
+    }
+
+    static ResultSet getHistory() throws SQLException {
+        return stmt.executeQuery("SELECT * FROM chatHistory");
+    }
+
 }

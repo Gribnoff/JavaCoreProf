@@ -41,12 +41,13 @@ class Server {
         }
     }
 
-    void broadcastMsg(ClientHandler from, String msg) throws IOException {
+    void broadcastMsg(ClientHandler from, String msg) throws IOException, SQLException {
         for (ClientHandler o : clients) {
             if(!o.checkBlackList(from.getNick())) {
                 o.sendMsg(msg);
             }
         }
+        AuthService.saveReplica(from.getNick(), msg);
     }
 
     boolean isNickBusy(String nick) {
