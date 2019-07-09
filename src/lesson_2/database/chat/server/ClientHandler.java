@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
             this.blackList = new ArrayList<>();
+//            blackList.add("nick2");
             Thread t1 = new Thread(() -> {
                 try {
                     while (true) {
@@ -44,6 +46,14 @@ class ClientHandler {
                                     sendMsg("/authok");
                                     nick = newNick;
                                     server.subscribe(this);
+
+                                    ResultSet history = AuthService.getHistory();
+                                    while (history.next()) {
+                                        String from = history.getString(1);
+                                        if (!blackList.contains(from))
+                                            sendMsg(history.getString(1) + " " + history.getString(2));
+                                    }
+
                                     break;
                                 } else {
                                     sendMsg("Учетная запись уже используется");
@@ -75,6 +85,7 @@ class ClientHandler {
 
                         } else {
                             server.broadcastMsg(this,nick + " " + str);
+                            AuthService.saveReplica(nick, str);
                         }
                         System.out.println("Client: " + str);
                     }
