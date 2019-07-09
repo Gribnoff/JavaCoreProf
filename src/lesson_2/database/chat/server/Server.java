@@ -41,7 +41,7 @@ class Server {
         }
     }
 
-    void broadcastMsg(ClientHandler from, String msg) {
+    void broadcastMsg(ClientHandler from, String msg) throws IOException {
         for (ClientHandler o : clients) {
             if(!o.checkBlackList(from.getNick())) {
                 o.sendMsg(msg);
@@ -58,7 +58,7 @@ class Server {
         return false;
     }
 
-    private void broadcastClientList() {
+    private void broadcastClientList() throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("/clientList ");
         for (ClientHandler o: clients) {
@@ -72,7 +72,7 @@ class Server {
         }
     }
 
-    void sendPersonalMsg(ClientHandler from, String nickTo, String msg) {
+    void sendPersonalMsg(ClientHandler from, String nickTo, String msg) throws IOException {
         for (ClientHandler o: clients) {
             if(o.getNick().equals(nickTo)) {
                 o.sendMsg("from " + from.getNick() + ": " + msg);
@@ -83,12 +83,12 @@ class Server {
         from.sendMsg("Клиент с ником " + nickTo + ": " + msg);
     }
 
-    void subscribe(ClientHandler client) {
+    void subscribe(ClientHandler client) throws IOException {
         clients.add(client);
         broadcastClientList();
     }
 
-    void unsubscribe(ClientHandler client) {
+    void unsubscribe(ClientHandler client) throws IOException {
         clients.remove(client);
         broadcastClientList();
     }
