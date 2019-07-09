@@ -1,6 +1,6 @@
 package lesson_1.generics;
 
-public class Solution1 {
+class Solution1 {
     public static void main(String[] args) {
         Integer[] array = {1, 2, 3, 4, 5};
 

@@ -3,7 +3,7 @@ package lesson_1.generics;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Solution2 {
+class Solution2 {
     public static void main(String[] args) {
         String[] array = {"String #1", "Строка №2", "str #3", "s #4", "this is string, too"};
         ArrayList list = castToArrayList(array);
