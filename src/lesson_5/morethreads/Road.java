@@ -2,7 +2,7 @@ package lesson_5.morethreads;
 
 public class Road extends Stage {
     Road(int length) {
-        this.length = length;
+        super(length);
         this.description = "Дорога " + length + " метров";
     }
 
