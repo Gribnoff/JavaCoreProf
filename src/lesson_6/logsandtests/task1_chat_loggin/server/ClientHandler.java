@@ -1,5 +1,7 @@
 package lesson_6.logsandtests.task1_chat_loggin.server;
 
+import org.apache.log4j.Logger;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ class ClientHandler {
     private DataOutputStream out;
     private DataInputStream in;
     private ArrayList<String> blackList;
+    private final Logger logger;
 
     String getNick() {
         return nick;
@@ -26,6 +29,7 @@ class ClientHandler {
     private String nick;
 
     ClientHandler(Server server, Socket socket) {
+        logger = server.getLogger();
         try {
             this.socket = socket;
             this.server = server;
@@ -56,9 +60,11 @@ class ClientHandler {
 
                                     break;
                                 } else {
+                                    logger.info(String.format("Клиент(%s) пытался повторно зайти в чат", socket));
                                     sendMsg("Учетная запись уже используется");
                                 }
                             } else {
+                                logger.info(String.format("Клиент(%s) пытался зайти в чат, используя некорректные данные", socket));
                                 sendMsg("Неверный логин/пароль");
                             }
                         }
@@ -66,6 +72,7 @@ class ClientHandler {
                     while (true) {
                         String str = in.readUTF();
                         if(str.startsWith("/")) {
+                            logger.info(String.format("Клиент(%s) прислал команду: %s", nick, str));
                             if (str.equals("/end")) {
                                 out.writeUTF("/serverclosed");
                                 break;
@@ -84,6 +91,7 @@ class ClientHandler {
                             }
 
                         } else {
+                            logger.info(String.format("Клиент(%s) прислал сообщение: %s", nick, str));
                             server.broadcastMsg(this,nick + " " + str);
                         }
                         System.out.println("Client: " + str);
