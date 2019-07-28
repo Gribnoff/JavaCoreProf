@@ -1,5 +1,7 @@
 package lesson_6.logsandtests.task1_chat_loggin.server;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,25 +9,35 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 class Server {
+    private final Logger logger;
     private Vector<ClientHandler> clients;
+
+    Logger getLogger() {
+        return logger;
+    }
 
     Server() throws SQLException {
         clients = new Vector<>();
         ServerSocket server = null;
         Socket socket = null;
+        logger = Logger.getLogger("servlog");
+
         try {
             AuthService.connect();
             server = new ServerSocket(8189);
+            logger.info("Сервер запущен");
             System.out.println("Сервер запущен. Ожидаем клиентов...");
             while (true) {
                 socket = server.accept();
                 System.out.println("Клиент подключился");
+                logger.info(String.format("Клиент подключился (%s)", socket));
                  new ClientHandler(this, socket);
                // clients.add(new ClientHandler(this, socket));
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            logger.fatal("Server closed");
             try {
                 assert socket != null;
                 socket.close();
@@ -86,11 +98,13 @@ class Server {
 
     void subscribe(ClientHandler client) throws IOException {
         clients.add(client);
+        logger.info(String.format("Клиент(%s) зашёл в чат", client.getNick()));
         broadcastClientList();
     }
 
     void unsubscribe(ClientHandler client) throws IOException {
         clients.remove(client);
+        logger.info(String.format("Клиент(%s) вышел из чата", client.getNick()));
         broadcastClientList();
     }
 }
