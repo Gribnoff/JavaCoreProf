@@ -1,4 +1,4 @@
-import lesson_6.logsandtests.task2.Solution;
+import lesson_6_logsandtests.task2.Solution;
 import org.junit.Assert;
 import org.junit.Test;
 
